@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My To Do List</title>
+    <link rel="icon" href="to-dolist.jpg">
+    
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+            margin-top: 100px;
+        }
+         #taskInput, #addTaskBtn {
+            margin-bottom: 10px;
+        }
+        #addTaskBtn{
+            background-color: rgb(3, 182, 18);
+            color: white;
+            cursor: pointer;
+        }
+        #addTaskBtn:hover{
+            background-color: rgb(1, 117, 11);
+            
+        }
+        #taskList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        #taskList li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            background-color: #ccc;
+            padding: 10px;  
+        }
+        #taskList li button {
+            margin-left: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: auto;
+        }
+        #taskList li button:hover {
+            background-color: red;
+            color: white;
+        }
+        
+        </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>My To Do List</h1>
+        <input type="text" id="taskInput" placeholder="Masukan Tugas">
+        <button id="addTaskBtn">Tambah</button>
+        <ul id="taskList"></ul>
+    </div>
+    <script>
+        alert("Website ini tidak menyimpan informasi pribadi Anda. Semua daftar tugas yang Anda buat hanya tersimpan di perangkat Anda dan tidak akan disimpan di server kami atau dibagikan kepada pihak lain.")
+        let taskInput = document.getElementById("taskInput");
+        let addTaskBtn = document.getElementById("addTaskBtn");
+        let taskList = document.getElementById("taskList");
+
+        function addTask() {
+            let task = taskInput.value;
+            if (task === "") return;
+
+            let li = document.createElement("li");
+            li.innerHTML = `${task} <button onclick="removeTask(this)">Hapus</button>`;
+            taskList.appendChild(li);
+
+            saveTask(task);
+            taskInput.value = "";
+        }
+
+        function removeTask(button) {
+            let li = button.parentElement;
+            let task = li.textContent.replace("Hapus", "").trim();
+            li.remove();
+            removeTaskFromStorage(task);
+        }
+
+        function saveTask(task) {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.push(task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.forEach(function(task) {
+                let li = document.createElement("li");
+                li.innerHTML = `${task} <button onclick="removeTask(this)">Hapus</button>`;
+                taskList.appendChild(li);
+            });
+        }
+
+        function removeTaskFromStorage(task) {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks = tasks.filter(t => t !== task);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        addTaskBtn.addEventListener("click", addTask);
+        loadTasks();
+
+        
+    
+
+        // Tambahkan event listener untuk input
+        taskInput.addEventListener("keypress", function(event) {
+            // Cek apakah tombol yang ditekan adalah Enter
+            if (event.key === "Enter") {
+                // Mencegah perilaku default dari form submission
+                event.preventDefault();
+                // Panggil fungsi addTask
+                addTask();
+            }
+        });
+
+    </script>
+</body>
+</html>
